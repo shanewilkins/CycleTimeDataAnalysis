@@ -6,6 +6,7 @@ Shane Wilkins
 
 This directory contains the tools I'm building to help NRCS analyze the data provided to us by Accenture.
 
+
 ### Contents
 
 * /rawData  <<< put the accenture data here so tcr can find it. This folder should contain 255 .xlsx files-one for each state (counting Pacific Island Area as the state of Hawaii) and one for the Caribbean Island area.
@@ -13,6 +14,9 @@ This directory contains the tools I'm building to help NRCS analyze the data pro
 * tcr.py <<< a python script to **tidy, convert, and rename** the Accenture data spreadsheets into csv files.
 * tidy.sh <<< a bash script to call tcr on every file in /rawData, save an intermediate, tidied csv file to /tidyData, then concatenate everything in tidyData together into one file, called data.csv located in the main directory.
 * data.csv <<< the tidied data, all in one big file.
+* dataDictionary.md <<< a markdown file that describes the source data.
+* license.md <<< the license file for the project--it's public domain.
+* 
 
 
 ### Howto
