@@ -400,7 +400,7 @@ class newRecord():
             #     state = state.upper()
 
         except IndexError:
-            print("Couldn't read the name in record {self.id}")
+            print(f"Couldn't read the name in record {self.id}")
 
 
         """
@@ -507,24 +507,27 @@ def main(args):
 
     data = [] # Initialize an empty list.
 
-    print(f"Processing {args.filename} . . . ")
+    print(f"Processing {args.filename} . . . ", end='')
     old_records = pyexcel.get_records(file_name=args.filename)
 
-    for record in old_records:  # we get an individual record.
-        new_record = newRecord(week, state, record)
-                                        # we're going to pass the record to get
-                                        # our newRecord class, and it's tidy()
-                                        # method. We need to pass week too!
-        tidy_data = new_record.tidy()   # pass the newly tidied records to this
-                                        # and now append to our data list.
+    try:
+        for record in old_records:  # we get an individual record.
+            new_record = newRecord(week, state, record)
+                                            # we're going to pass the record to get
+                                            # our newRecord class, and it's tidy()
+                                            # method. We need to pass week too!
+            tidy_data = new_record.tidy()   # pass the newly tidied records to this
+                                            # and now append to our data list.
 
-        for i in range(len(tidy_data)):
-            data.append(tidy_data[i])
+            for i in range(len(tidy_data)):
+                data.append(tidy_data[i])
 
-    # Now we save our data to a csv file.
-    outfile_name = "./tidyData/" + str(state) + "_" + str(week) + ".csv"
-    pyexcel.save_as(array=data, dest_file_name=outfile_name)
-    print(" . . . Success!")
+        # Now we save our data to a csv file.
+        outfile_name = "./tidyData/" + str(state) + "_" + str(week) + ".csv"
+        pyexcel.save_as(array=data, dest_file_name=outfile_name)
+        print("Success!")
+    except KeyError:
+            print("Failure?")
     # TADA!
 
 if __name__ == "__main__":
