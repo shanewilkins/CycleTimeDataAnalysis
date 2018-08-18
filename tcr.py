@@ -26,8 +26,11 @@ class newRecord():
 
         self.week = week
         self.state = state
-        days = self.getDays(week)
+        days = self.getDays(week) # these are strings that will be the names of
+                                  # columns we access below.
         self.dates = self.getDates(week)
+                                # these are the actual dates of those days,
+                                # in a reasonable unix timestamp format.
 
         self.id = record["ID"], # We're going to keep this ID
                                 # from the source file just in case.
@@ -48,7 +51,7 @@ class newRecord():
         self.fourth_work_day = record[days[3]],
         self.fifth_work_day = record[days[4]],
         self.completion = record["Is this task complete?"],
-        self.content_type = record["Content Type"],
+        #self.content_type = record["Content Type"],
 
         # Ok, we're gonna do some more regex magic here. Creator and modifier
         # fields look like "Shackleford, Angus - NRCS, Apaloosa, TX"
@@ -123,7 +126,7 @@ class newRecord():
             monday = [
                 monday_date, self.id[0], self.taskType[0], self.taskProgram[0],
                 self.taskCustomer[0], self.taskFourthLevel[0], self.work_type[0],
-                self.completion[0], self.content_type[0], self.creatorLastName,
+                self.completion[0], self.creatorLastName,
                 self.creatorFirstName, self.creatorCity, self.creatorState,
                 self.modifierLastName, self.modifierFirstName, self.modifierCity,
                 self.modifierState, hours_1,
@@ -137,7 +140,7 @@ class newRecord():
             tuesday = [
                 tuesday_date, self.id[0], self.taskType[0], self.taskProgram[0],
                 self.taskCustomer[0], self.taskFourthLevel[0], self.work_type[0],
-                self.completion[0], self.content_type[0], self.creatorLastName,
+                self.completion[0], self.creatorLastName,
                 self.creatorFirstName, self.creatorCity, self.creatorState,
                 self.modifierLastName, self.modifierFirstName, self.modifierCity,
                 self.modifierState, hours_2,
@@ -151,7 +154,7 @@ class newRecord():
             wednesday = [
                 wednesday_date, self.id[0], self.taskType[0], self.taskProgram[0],
                 self.taskCustomer[0], self.taskFourthLevel[0], self.work_type[0],
-                self.completion[0], self.content_type[0], self.creatorLastName,
+                self.completion[0],  self.creatorLastName,
                 self.creatorFirstName, self.creatorCity, self.creatorState,
                 self.modifierLastName, self.modifierFirstName, self.modifierCity,
                 self.modifierState, hours_3,
@@ -165,7 +168,7 @@ class newRecord():
             thursday = [
                 thursday_date, self.id[0], self.taskType[0], self.taskProgram[0],
                 self.taskCustomer[0], self.taskFourthLevel[0], self.work_type[0],
-                self.completion[0], self.content_type[0], self.creatorLastName,
+                self.completion[0],  self.creatorLastName,
                 self.creatorFirstName, self.creatorCity, self.creatorState,
                 self.modifierLastName, self.modifierFirstName, self.modifierCity,
                 self.modifierState, hours_4,
@@ -180,7 +183,7 @@ class newRecord():
             friday = [
                 friday_date, self.id[0], self.taskType[0], self.taskProgram[0],
                 self.taskCustomer[0], self.taskFourthLevel[0], self.work_type[0],
-                self.completion[0], self.content_type[0], self.creatorLastName,
+                self.completion[0],  self.creatorLastName,
                 self.creatorFirstName, self.creatorCity, self.creatorState,
                 self.modifierLastName, self.modifierFirstName, self.modifierCity,
                 self.modifierState, hours_5,
@@ -327,10 +330,28 @@ class newRecord():
             splitter = re.compile(r' - *')
             fields = splitter.split(old_taskID)
 
-            field_1 = fields[0]
-            field_2 = fields[1]
-            field_3 = fields[2]
-            field_4 = fields[3]
+            list = []
+            try:
+                field_1 = fields[0]
+            except IndexError:
+                return list
+
+            try:
+                field_2 = fields[1]
+            except IndexError:
+                list = [field_1]
+                return list
+
+            try:
+                field_3 = fields[2]
+            except IndexError:
+                list = [field_1, field_2]
+                return list
+
+            try:
+                field_4 = fields[3]
+            except IndexError:
+                list = [field_1, field_2, field_3]
 
         """
         </magic>
@@ -460,7 +481,7 @@ def parseFileName(filename):
         "Ohio",
         "Oklahoma",
         "Oregon",
-        "Pacific Island Area",
+        "Pacific Islands Area",
         "Pennsylvania",
         "Rhode Island",
         "South Carolina",
@@ -469,6 +490,7 @@ def parseFileName(filename):
         "Texas",
         "Utah",
         "Vermont",
+        "Virginia",
         "Washington",
         "West Virginia",
         "Wisconsin",
@@ -507,15 +529,20 @@ def main(args):
 
     data = [] # Initialize an empty list.
 
+    sheet = pyexcel.get_sheet(file_name=args.filename, name_columns_by_row=0)
+    records = sheet.to_records()
+
+
     print(f"Processing {args.filename} . . . ", end='')
-    old_records = pyexcel.get_records(file_name=args.filename)
+    #old_records = pyexcel.get_records(file_name=args.filename)
 
     try:
-        for record in old_records:  # we get an individual record.
+        for record in records:  # we get an individual record.
             new_record = newRecord(week, state, record)
                                             # we're going to pass the record to get
                                             # our newRecord class, and it's tidy()
                                             # method. We need to pass week too!
+
             tidy_data = new_record.tidy()   # pass the newly tidied records to this
                                             # and now append to our data list.
 
@@ -528,7 +555,7 @@ def main(args):
         print("Success!")
     except KeyError:
             print("Failure?")
-    # TADA!
+
 
 if __name__ == "__main__":
     """

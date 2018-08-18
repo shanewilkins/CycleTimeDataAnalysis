@@ -2,7 +2,7 @@
 
 The data sources are 255 xlsx files, each of which has a name like: 'Week 1 (4_15 - 4_20) - Alabama.xlsx'. There should be one file for each of the 50 states (counting 'Pacific Island Area' as Hawaii) and one for the Caribbean Islands Area each of the 5 weeks: 51 * 5 = 255.
 
-Here are the columns in the original sheets (in some order!):
+Here are the columns in the original sheets (in some order, varies by week, and even by state within week!):
 
 0. <ID> (mandatory) << an integer
 1. <TaskID> (optional, but mostly there) << a big string that concatenates together (in this order):
